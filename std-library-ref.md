@@ -1,6 +1,6 @@
 # Cmajor Standard Library Reference
 
-> Source: `/Users/whatevergeek/Laboratory/Sandbox/cmajor_stuff/cmajor/standard_library/`
+> Source: `../../cmajor_stuff/cmajor/standard_library/`
 
 ---
 
