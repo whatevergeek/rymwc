@@ -1,15 +1,13 @@
 # Presentation Setup — Rock Your Music With Code
 
-> Fill this in as you build and test. Pin your versions, document audio config, and note rescue steps.
-
 ## Version Pinning
 
 | Tool | Version | Date Tested | Notes |
 |---|---|---|---|
-| Bespoke Synth | | | |
-| Cmajor | | | |
-| OS | macOS Tahoe | | |
-| Audio Interface | Built-in / External | | |
+| Bespoke Synth | NIGHTLY 1.3.0 (May 31 2026) | ✅ | HEAD d9667a2 |
+| Cmajor | 1.0.3066 (Nov 22 2025) | ✅ | standard_library verified |
+| OS | macOS Tahoe 26.5.1 | ✅ | |
+| Audio Interface | Built-in / External | | TBD |
 
 ## Audio Configuration
 
