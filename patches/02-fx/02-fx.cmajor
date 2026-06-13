@@ -8,21 +8,17 @@
 */
 graph LowPassFilter [[ main ]]
 {
+    input filter.frequency;
+    input filter.q;
+
     input stream float in;
     output stream float out;
 
-    input value float cutoff     [[ name: "Cutoff", min: 20, max: 5000, init: 1000, unit: "Hz" ]];
-    input value float resonance  [[ name: "Resonance", min: 0, max: 1, init: 0.2 ]];
-
-    node filter = std::filters::svf::Processor;
+    node filter = std::filters::tpt::svf::Processor;
 
     connection
     {
-        in -> filter.audioIn;
-
-        cutoff -> filter.frequencyHzIn;
-        resonance -> filter.QIn;
-
-        filter.lowpassOut -> out;
+        in -> filter.in;
+        filter.out -> out;
     }
 }
