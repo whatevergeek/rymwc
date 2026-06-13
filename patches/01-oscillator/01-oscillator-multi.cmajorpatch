@@ -1,0 +1,12 @@
+{
+    "CmajorVersion":    1,
+    "ID":               "com.rymwc.oscillator-multi",
+    "version":          "1.0",
+    "name":             "Multi-Waveform Oscillator",
+    "description":      "A simple MIDI-controlled oscillator with selectable sine or square waveform",
+    "category":         "generator",
+    "manufacturer":     "Rock Your Music With Code",
+    "isInstrument":     true,
+
+    "source":           "01-oscillator-multi.cmajor"
+}

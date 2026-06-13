@@ -1,6 +1,6 @@
 /**
     Step 3: Arpeggiator (MIDI Effect)
-    Takes held MIDI notes and produces a rhythmic pattern.
+    Takes held MIDI notes and cycles through them at a set rate.
     Useful for generating chord arpeggios automatically.
 
     This is the THIRD patch (optional, if time permits).
@@ -11,43 +11,100 @@ processor Arpeggiator [[ main ]]
     input event std::midi::Message midiIn;
     output event std::midi::Message midiOut;
 
-    // Tracks which notes are currently held
+    // Arpeggiator rate (BPM)
+    input event float32 rate [[ name: "Rate", min: 20, max: 480, init: 120, unit: "BPM" ]];
+
+    // Tracks which notes are currently held (max 16)
     int[16] heldNotes;
     int heldCount;
     int currentNoteIndex;
+    int previousNote;
+
+    // Timing
+    float32 samplesPerBeat;
+    int sampleCounter;
+    bool noteIsOn;
+
+        void init()
+    {
+        samplesPerBeat = float32 (processor.frequency) / (120.0f / 60.0f);  // default 120 BPM
+        sampleCounter = 0;
+        currentNoteIndex = 0;
+        previousNote = -1;
+        heldCount = 0;
+        noteIsOn = false;
+    }
+
+    event rate (float32 newRate)
+    {
+        samplesPerBeat = float32 (processor.frequency) / (newRate / 60.0f);
+    }
 
     event midiIn (std::midi::Message m)
     {
+        // Do NOT pass through note-on/note-off — the arpeggiator handles those
+        // Only pass through non-note messages (pitch bend, CC, etc.)
         if (m.isNoteOn())
         {
             // Add note to held list
             if (heldCount < 16)
             {
-                heldNotes[heldCount] = m.getNote();
+                heldNotes[heldCount] = m.getNoteNumber();
                 heldCount++;
             }
-            // Pass through original note
-            midiOut <- m;
         }
         else if (m.isNoteOff())
         {
             // Remove note from held list
             for (int i = 0; i < heldCount; i++)
             {
-                if (heldNotes[i] == m.getNote())
+                if (heldNotes[i] == m.getNoteNumber())
                 {
                     heldNotes[i] = heldNotes[heldCount - 1];
                     heldCount--;
                     break;
                 }
             }
-            // Pass through original note-off
-            midiOut <- m;
         }
         else
         {
             // Pass through all other messages (pitch bend, CC, etc.)
             midiOut <- m;
+        }
+    }
+
+    void main()
+    {
+        loop
+        {
+            // Count samples for arpeggiator timing
+            sampleCounter++;
+
+            if (sampleCounter >= int (samplesPerBeat))
+            {
+                sampleCounter = 0;
+                noteIsOn = false;   // reset for next tick
+
+                // Only arpeggiate if there are held notes
+                if (heldCount > 0)
+                {
+                    // Send note-off for previous note (if any)
+                    if (previousNote >= 0)
+                        midiOut <- std::midi::createMessage (0x80, previousNote, 0);
+
+                    // Play current note in the cycle
+                    currentNoteIndex = currentNoteIndex % heldCount;
+                    int note = heldNotes[currentNoteIndex];
+                    midiOut <- std::midi::createMessage (0x90, note, 100);
+                    previousNote = note;
+                    noteIsOn = true;
+
+                    // Advance to next note
+                    currentNoteIndex++;
+                }
+            }
+
+            advance();
         }
     }
 }
