@@ -1,47 +1,91 @@
 /**
     Step 4: Full Song Patch (Closer)
-    Combines everything from steps 1-3 into one complete instrument.
+    Combines oscillator, filter, and multiple voices into a complete instrument.
 
     This is the NON-NEGOTIABLE closer.
     Everything you just saw built — now running together.
 
     BUILD INSTRUCTION:
-    1. Start with the oscillator patch from step 1
-    2. Add the filter from step 2 on the audio chain
-    3. Add the arpeggiator from step 3 before the oscillator
-    4. Add a second oscillator for bass
-    5. Mix everything and add reverb
-
-    In Bespoke, this would be a complex patch with:
-    - Multiple Cmajor instances (lead, bass, pad)
-    - Audio routing between them
-    - Built-in Bespoke modules (sequencer, mixer, reverb)
-    - Parameter automation
+    In Bespoke, visually connect:
+    1. MIDI keyboard → Arpeggiator → SineSynth (lead)
+    2. SineSynth → LowPassFilter
+    3. Add a second SineSynth for bass
+    4. Add a third SineSynth for pad
+    5. Mix everything with Bespoke's mixer module
+    6. Add reverb from Bespoke's built-in effects
 
     For the live demo, build this in Bespoke's visual patcher
     rather than as a single .cmajor file — it's more impressive
     to show the connections growing organically.
+
+    This .cmajor file serves as a starting point / example.
 */
 graph SongPatch [[ main ]]
 {
+    input event std::midi::Message midiIn;
     output stream float out;
 
-    // Parameters
-    input event float volume  [[ name: "Volume", min: 0, max: 1, init: 0.15 ]];
+    // Three voice layers: lead (high), pad (mid), bass (low)
+    let voiceCount = 4;
 
-    // Lead oscillator
-    node leadSine = std::oscillators::Sine (float, 440);
+    node
+    {
+        leadVoices    = Voice[voiceCount];
+        leadAllocator = std::voices::VoiceAllocator (voiceCount);
 
-    // Pad oscillator (detuned)
-    node padSine = std::oscillators::Sine (float, 438);
+        padVoices     = Voice[voiceCount];
+        padAllocator  = std::voices::VoiceAllocator (voiceCount);
 
-    // Bass (lower octave)
-    node bassSine = std::oscillators::Sine (float, 110);
+        bassVoices    = Voice[voiceCount];
+        bassAllocator = std::voices::VoiceAllocator (voiceCount);
+    }
 
     connection
     {
-        // Mix everything with different levels
-        // Lead at full, pad slightly quieter, bass warm
-        leadSine.out * 0.3f + padSine.out * 0.2f + bassSine.out * 0.4f -> out;
+        // Lead: MIDI → voices → filter → mixer
+        midiIn -> std::midi::MPEConverter -> leadAllocator;
+        leadAllocator.voiceEventOut -> leadVoices.eventIn;
+        leadVoices * 0.3f -> out;
+
+        // Pad: MIDI → voices (detuned internally) → mixer
+        midiIn -> std::midi::MPEConverter -> padAllocator;
+        padAllocator.voiceEventOut -> padVoices.eventIn;
+        padVoices * 0.2f -> out;
+
+        // Bass: MIDI → voices (lower octave) → mixer
+        midiIn -> std::midi::MPEConverter -> bassAllocator;
+        bassAllocator.voiceEventOut -> bassVoices.eventIn;
+        bassVoices * 0.4f -> out;
+    }
+}
+
+graph Voice
+{
+    input event (std::notes::NoteOn, std::notes::NoteOff) eventIn;
+    output stream float out;
+
+    node
+    {
+        noteToFrequency = NoteToFrequency;
+        envelope = std::envelopes::FixedASR (0.01f, 0.5f);
+        oscillator = std::oscillators::Sine (float32);
+    }
+
+    connection
+    {
+        eventIn -> noteToFrequency -> oscillator.frequencyIn;
+        eventIn -> envelope.eventIn;
+        (envelope.gainOut * oscillator.out) -> out;
+    }
+}
+
+processor NoteToFrequency
+{
+    input event std::notes::NoteOn eventIn;
+    output event float32 frequencyOut;
+
+    event eventIn (std::notes::NoteOn e)
+    {
+        frequencyOut <- std::notes::noteToFrequency (e.pitch);
     }
 }

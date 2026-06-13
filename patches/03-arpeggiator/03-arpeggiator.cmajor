@@ -4,37 +4,50 @@
     Useful for generating chord arpeggios automatically.
 
     This is the THIRD patch (optional, if time permits).
-    Can be placed between a keyboard and a synth in the signal chain.
+    Place between a keyboard and a synth in the signal chain.
 */
 processor Arpeggiator [[ main ]]
 {
-    input  stream float audioIn;
-    output stream float audioOut;
+    input event std::midi::Message midiIn;
+    output event std::midi::Message midiOut;
 
-    input event int32 direction [[ name: "Direction", text: "Up|Down|Up-Down" ]];
-    input event float rate      [[ name: "Rate", min: 0.1, max: 4, init: 1, unit: "" ]];
+    // Tracks which notes are currently held
+    int[16] heldNotes;
+    int heldCount;
+    int currentNoteIndex;
 
-    int noteHeld [128];  // Track which notes are held
-    int noteCount;
-    int currentStep;
-    float clock;
-
-    void main()
+    event midiIn (std::midi::Message m)
     {
-        // In a real implementation, MIDI event processing would go here.
-        // For the demo, this patch serves as a placeholder to show the
-        // concept of routing MIDI through a processor.
-
-        // For now, this is a simple pass-through processor.
-        // When you build the actual demo, you can:
-        //   1. Add MIDI input/output endpoints
-        //   2. Implement note detection and sorting
-        //   3. Generate arpeggiated MIDI events based on the clock
-
-        loop
+        if (m.isNoteOn())
         {
-            audioOut <- audioIn;
-            advance();
+            // Add note to held list
+            if (heldCount < 16)
+            {
+                heldNotes[heldCount] = m.getNote();
+                heldCount++;
+            }
+            // Pass through original note
+            midiOut <- m;
+        }
+        else if (m.isNoteOff())
+        {
+            // Remove note from held list
+            for (int i = 0; i < heldCount; i++)
+            {
+                if (heldNotes[i] == m.getNote())
+                {
+                    heldNotes[i] = heldNotes[heldCount - 1];
+                    heldCount--;
+                    break;
+                }
+            }
+            // Pass through original note-off
+            midiOut <- m;
+        }
+        else
+        {
+            // Pass through all other messages (pitch bend, CC, etc.)
+            midiOut <- m;
         }
     }
 }
