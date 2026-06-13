@@ -11,19 +11,15 @@ rymwc/
 │   ├── 01-oscillator/          # Step 1: Sine wave oscillator (instrument)
 │   │   ├── 01-oscillator.cmajorpatch  # Manifest (JSON)
 │   │   └── 01-oscillator.cmajor       # Source code
+│   ├── 01-oscillator-multi/    # Step 1b: Sine/square switchable oscillator
+│   │   ├── 01-oscillator-multi.cmajorpatch
+│   │   └── 01-oscillator-multi.cmajor
 │   ├── 02-fx/                  # Step 2: Low-pass filter (effect)
 │   │   ├── 02-fx.cmajorpatch
 │   │   └── 02-fx.cmajor
-│   ├── 03-arpeggiator/         # Step 3: MIDI arpeggiator (optional)
-│   │   ├── 03-arpeggiator.cmajorpatch
-│   │   └── 03-arpeggiator.cmajor
-│   └── 04-song/                # Step 4: Full song patch (closer)
-│       ├── 04-song.cmajorpatch
-│       └── 04-song.cmajor
-├── bespoke-saves/              # Bespoke .bsk patch files
-├── screencasts/                # Fallback demo recordings
-├── slides/                     # PDF export of Keynote slides (post-talk)
-└── presentation_setup.md       # Version pinning, audio config, rescue notes
+│   └── 03-arpeggiator/         # Step 3: MIDI arpeggiator with BPM control
+│       ├── 03-arpeggiator.cmajorpatch
+│       └── 03-arpeggiator.cmajor
 ```
 
 ## Quick Start
@@ -36,16 +32,20 @@ rymwc/
 ### Run the oscillator patch
 1. Open `patches/01-oscillator/01-oscillator.cmajorpatch` in VScode
 2. Run `Cmajor: Run patch` from the command palette
-3. A window opens with controls for Frequency and Volume
-4. Hear a continuous sine wave
+3. A window opens with controls — hear a sine wave
 
 ### Load in Bespoke
 1. Open Bespoke
 2. Add a Cmajor VST/AU plugin module
-3. Drag `01-oscillator.cmajorpatch` onto the plugin GUI
+3. Drag any `.cmajorpatch` file onto the plugin GUI
 4. Connect a MIDI keyboard (or use Bespoke's built-in sequencer)
 5. Connect audio output to your speakers
 6. Play a note — hear a sine wave
+
+### Chain patches in Bespoke
+Wire patches together visually in Bespoke:
+- **MIDI keyboard → Arpeggiator → Oscillator → Filter → Output**
+- Switch the oscillator to square wave for richer harmonics through the filter
 
 ## Links
 
