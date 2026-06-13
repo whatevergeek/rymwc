@@ -1,0 +1,12 @@
+{
+    "CmajorVersion":    1,
+    "ID":               "com.rymwc.oscillator",
+    "version":          "1.0",
+    "name":             "Sine Oscillator",
+    "description":      "A simple MIDI-controlled sine wave oscillator - the first demo step",
+    "category":         "generator",
+    "manufacturer":     "Rock Your Music With Code",
+    "isInstrument":     true,
+
+    "source":           "01-oscillator.cmajor"
+}

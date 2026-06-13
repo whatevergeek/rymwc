@@ -1,0 +1,47 @@
+/**
+    Step 4: Full Song Patch (Closer)
+    Combines everything from steps 1-3 into one complete instrument.
+
+    This is the NON-NEGOTIABLE closer.
+    Everything you just saw built — now running together.
+
+    BUILD INSTRUCTION:
+    1. Start with the oscillator patch from step 1
+    2. Add the filter from step 2 on the audio chain
+    3. Add the arpeggiator from step 3 before the oscillator
+    4. Add a second oscillator for bass
+    5. Mix everything and add reverb
+
+    In Bespoke, this would be a complex patch with:
+    - Multiple Cmajor instances (lead, bass, pad)
+    - Audio routing between them
+    - Built-in Bespoke modules (sequencer, mixer, reverb)
+    - Parameter automation
+
+    For the live demo, build this in Bespoke's visual patcher
+    rather than as a single .cmajor file — it's more impressive
+    to show the connections growing organically.
+*/
+graph SongPatch [[ main ]]
+{
+    output stream float out;
+
+    // Parameters
+    input event float volume  [[ name: "Volume", min: 0, max: 1, init: 0.15 ]];
+
+    // Lead oscillator
+    node leadSine = std::oscillators::Sine (float, 440);
+
+    // Pad oscillator (detuned)
+    node padSine = std::oscillators::Sine (float, 438);
+
+    // Bass (lower octave)
+    node bassSine = std::oscillators::Sine (float, 110);
+
+    connection
+    {
+        // Mix everything with different levels
+        // Lead at full, pad slightly quieter, bass warm
+        leadSine.out * 0.3f + padSine.out * 0.2f + bassSine.out * 0.4f -> out;
+    }
+}

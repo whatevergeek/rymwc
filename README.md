@@ -7,23 +7,45 @@
 
 ```
 rymwc/
-├── patches/              # Cmajor instrument & FX patches
-│   ├── 01-oscillator/    # Step 1: Basic sine wave oscillator
-│   ├── 02-fx/           # Step 2: Filter/reverb FX
-│   ├── 03-arpeggiator/  # Step 3: MIDI arpeggiator (if time)
-│   └── 04-song/         # Step 4: Full song patch (closer)
-├── bespoke-saves/        # Bespoke .bsk patch files
-├── screencasts/          # Fallback demo recordings
-├── slides/              # PDF export of Keynote slides (post-talk)
-└── presentation_setup.md # Version pinning, audio config, rescue notes
+├── patches/                    # Cmajor patch folders (each is a plugin)
+│   ├── 01-oscillator/          # Step 1: Sine wave oscillator (instrument)
+│   │   ├── 01-oscillator.cmajorpatch  # Manifest (JSON)
+│   │   └── 01-oscillator.cmajor       # Source code
+│   ├── 02-fx/                  # Step 2: Low-pass filter (effect)
+│   │   ├── 02-fx.cmajorpatch
+│   │   └── 02-fx.cmajor
+│   ├── 03-arpeggiator/         # Step 3: MIDI arpeggiator (optional)
+│   │   ├── 03-arpeggiator.cmajorpatch
+│   │   └── 03-arpeggiator.cmajor
+│   └── 04-song/                # Step 4: Full song patch (closer)
+│       ├── 04-song.cmajorpatch
+│       └── 04-song.cmajor
+├── bespoke-saves/              # Bespoke .bsk patch files
+├── screencasts/                # Fallback demo recordings
+├── slides/                     # PDF export of Keynote slides (post-talk)
+└── presentation_setup.md       # Version pinning, audio config, rescue notes
 ```
 
 ## Quick Start
 
-1. Download [Bespoke Synth](https://www.bespokesynth.com)
-2. Download the [Cmajor VST/AU plugin](https://cmajor.dev) or use the standalone
-3. Open `patches/01-oscillator/sine.cmajor` in the Cmajor IDE
-4. Load it in Bespoke, connect a MIDI keyboard, hear the sine wave
+### Prerequisites
+1. Install the [Cmajor VScode extension](https://marketplace.visualstudio.com/items?itemName=CmajorSoftware.cmajor-tools) — it auto-installs the compiler
+2. Download [Bespoke Synth](https://www.bespokesynth.com)
+3. (Optional) Install the [Cmajor VST/AU plugin](https://cmajor.dev) for DAW use
+
+### Run the oscillator patch
+1. Open `patches/01-oscillator/01-oscillator.cmajorpatch` in VScode
+2. Run `Cmajor: Run patch` from the command palette
+3. A window opens with controls for Frequency and Volume
+4. Hear a continuous sine wave
+
+### Load in Bespoke
+1. Open Bespoke
+2. Add a Cmajor VST/AU plugin module
+3. Drag `01-oscillator.cmajorpatch` onto the plugin GUI
+4. Connect a MIDI keyboard (or use Bespoke's built-in sequencer)
+5. Connect audio output to your speakers
+6. Play a note — hear a sine wave
 
 ## Links
 

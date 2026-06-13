@@ -1,0 +1,12 @@
+{
+    "CmajorVersion":    1,
+    "ID":               "com.rymwc.arpeggiator",
+    "version":          "1.0",
+    "name":             "Arpeggiator",
+    "description":      "A MIDI arpeggiator - the third demo step (optional, if time permits)",
+    "category":         "effect",
+    "manufacturer":     "Rock Your Music With Code",
+    "isInstrument":     false,
+
+    "source":           "03-arpeggiator.cmajor"
+}

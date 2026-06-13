@@ -1,0 +1,31 @@
+/**
+    Step 2: Low-Pass Filter (Effect)
+    A resonant state-variable filter effect.
+    Takes an audio input, applies low-pass filtering with resonance.
+
+    This is the SECOND patch you'll build in the demo.
+    Layer it on the oscillator to shape the sound.
+*/
+graph LowPassFilter [[ main ]]
+{
+    input stream float in;
+    output stream float out;
+
+    input event float cutoff    [[ name: "Cutoff", min: 20, max: 5000, init: 1000, unit: "Hz" ]];
+    input event float resonance [[ name: "Resonance", min: 0, max: 1, init: 0.2, unit: "" ]];
+
+    node filter = std::filters::svf::Processor;
+
+    connection
+    {
+        // Audio signal into filter
+        in -> filter.audioIn;
+
+        // Parameters into filter
+        cutoff -> filter.frequencyHzIn;
+        resonance -> filter.QIn;
+
+        // Filter output (low-pass mode)
+        filter.lowpassOut -> out;
+    }
+}

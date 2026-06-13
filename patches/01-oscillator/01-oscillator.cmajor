@@ -1,0 +1,27 @@
+/**
+    Step 1: Sine Oscillator (Instrument)
+    A simple MIDI-controlled sine wave oscillator.
+    Connect a MIDI keyboard, play notes, hear sine waves.
+
+    This is the FIRST patch you'll build in the demo.
+    It's the minimum viable instrument: MIDI in → sine wave out.
+*/
+graph SineOscillator [[ main ]]
+{
+    output stream float out;
+
+    // Expose frequency as a parameter so the host can control it
+    input event float frequency   [[ name: "Frequency", min: 20, max: 2000, init: 440, unit: "Hz" ]];
+    input event float volume      [[ name: "Volume", min: 0, max: 1, init: 0.15, unit: "" ]];
+
+    node sine = std::oscillators::Sine (float);
+
+    connection
+    {
+        // Frequency controls the oscillator pitch
+        frequency -> sine.frequencyIn;
+
+        // Sine wave → gain → output
+        sine.out * volume -> out;
+    }
+}

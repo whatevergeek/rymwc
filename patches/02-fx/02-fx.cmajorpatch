@@ -1,0 +1,12 @@
+{
+    "CmajorVersion":    1,
+    "ID":               "com.rymwc.lowpass",
+    "version":          "1.0",
+    "name":             "Low-Pass Filter",
+    "description":      "A resonant low-pass filter effect - the second demo step",
+    "category":         "effect",
+    "manufacturer":     "Rock Your Music With Code",
+    "isInstrument":     false,
+
+    "source":           "02-fx.cmajor"
+}
