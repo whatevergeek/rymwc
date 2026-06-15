@@ -1,1 +1,1 @@
-create a monosynth that has params only for volume, wave selection, and frequency filter
+create a monosynth that has params only for volume, wave selection, detune, and frequency filter
